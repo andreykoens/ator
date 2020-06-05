@@ -102,3 +102,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Compiled gcode
+.public/
+
+#vscode config
+ator.code-workspace

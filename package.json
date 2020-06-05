@@ -1,0 +1,25 @@
+{
+  "name": "ator",
+  "version": "1.0.0",
+  "description": "Assistente de pintura computadorizado",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "onchange 'App/**/*.js' -- npm run build",
+    "build": "node App/App.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreykoens/ator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andreykoens/ator/issues"
+  },
+  "homepage": "https://github.com/andreykoens/ator#readme",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "onchange": "^7.0.2"
+  }
+}
