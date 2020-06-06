@@ -7,4 +7,9 @@ Seu intuito é mediar a criação de código GCode para uso manual (criação de
 
 ---
 
+npm i
+npm run watch
+
+---
+
 Este software é parte da pesquisa acadêmica _Imagem computacional como pintura_ (Mestrado em Artes Visuais, Instituto de Artes UNESP, 2020), desenvolvido como parte das atividades da residência artística no Ateliê de Mídias IA-UNESP.

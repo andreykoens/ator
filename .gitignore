@@ -104,7 +104,7 @@ dist
 .tern-port
 
 # Compiled gcode
-.public/
+*.gcode
 
 #vscode config
 ator.code-workspace
