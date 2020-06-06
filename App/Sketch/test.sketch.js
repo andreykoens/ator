@@ -2,6 +2,7 @@ const Ator = require('../Core/Ator').Ator
 const go = require('../Core/Methods/Go')
 const line = require('../Core/Methods/Line')
 const poly = require('../Core/Methods/Polygon')
+const utils = require('../Core/Methods/Utils')
 
 function Init() {
     console.log("Sketch init".magenta)
@@ -34,44 +35,52 @@ function Init() {
     a.clear()
 
     // ---
-    a.comment('Draw Register')
-    line.fromTo(a, -1.25, 1.25, 1.25, -1.25)
-    line.fromTo(a, -1.25, -1.25, 1.25, 1.25)
+    utils.register(a, 0, 0, 10)
     
     // ---
     a.comment('Draw Square Testing')
     let rt = {
-        start: {x:0, y:2},
-        outer: {w:5, h:5},
-        inner: {w:1.5, h:1.5},
-        gutter: 1,
+        start: {x:0, y:25},
+        outer: {w:50, h:50},
+        inner: {w:15, h:15},
+        gutter: 10,
         origins: [
-            "BOTTOM_LEFT",
-            "BOTTOM_CENTER",
-            "BOTTOM_RIGHT",
-            "CENTER_LEFT",
-            "CENTER",
-            "CENTER_RIGHT",
-            "TOP_LEFT",
-            "TOP_CENTER",
-            "TOP_RIGHT"
+            [
+                "BOTTOM_LEFT",
+                "BOTTOM_CENTER",
+                "BOTTOM_RIGHT",
+            ],
+            [
+                "CENTER_LEFT",
+                "CENTER",
+                "CENTER_RIGHT",
+            ],
+            [
+                "TOP_LEFT",
+                "TOP_CENTER",
+                "TOP_RIGHT"
+            ]
         ]
     }
     
     rt.origins.forEach(
-        (origin, i) => {
-            poly.rect(
-                a,
-                rt.outer.w, 
-                rt.outer.h, 
-                {
-                    x: rt.start.x + (i * rt.outer.w) + (i * rt.gutter),
-                    y: 2.5
-                },
-                "BOTTOM_LEFT"
+        (originSet, y) => {
+            originSet.forEach(
+                (origin, x) => {
+                    poly.rect(
+                        a,
+                        rt.outer.w,
+                        rt.outer.h,
+                        {
+                            x: rt.start.x + (x * rt.outer.w) + (x * rt.gutter),
+                            y: rt.start.y + (y * rt.outer.h) + (y * rt.gutter)
+                        },
+                        "BOTTOM_LEFT"
+                    )
+                    go.toRel(a, rt.outer.w / 2, rt.outer.h / 2)
+                    poly.rect(a, rt.inner.w, rt.inner.h, {}, origin)
+                }
             )
-            go.toRel(a, rt.outer.w/2, rt.outer.h/2)
-            poly.rect(a, rt.inner.w, rt.inner.h, {}, origin)
         }
     )
     
