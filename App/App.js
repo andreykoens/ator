@@ -4,7 +4,8 @@ const path = require('path');
 const Sketch = require('./Sketch/test.sketch').Init
 
 Build = () => {
-    console.log('App init'.magenta)
+    console.clear()
+    console.log('App started'.gray)
     Sketch()
 }
 

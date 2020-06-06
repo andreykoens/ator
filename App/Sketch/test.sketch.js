@@ -4,9 +4,16 @@ const line = require('../Core/Methods/Line')
 const poly = require('../Core/Methods/Polygon')
 const utils = require('../Core/Methods/Utils')
 
-function Init() {
-    console.log("Sketch init".magenta)
+function Init(log = false) {
+    console.log("Sketch started".gray)
 
+    a = setup()
+    draw(a)
+    if (log) a.log()
+    a.export()
+}
+
+function setup() {
     grbl = {
         130: 50,    // X max travel
         131: 40,    // Y max travel
@@ -22,12 +29,14 @@ function Init() {
 
     tools = {}
 
-    a = new Ator(grbl, settings, tools)
+    return new Ator(grbl, settings, tools)
+}
 
+function draw(a) {
     // ---
     a.getGRBL()
     a.setGRBL()
-    
+
     // ---
     a.setAbsolute()
     a.setMeasure()
@@ -36,13 +45,13 @@ function Init() {
 
     // ---
     utils.register(a, 0, 0, 10)
-    
+
     // ---
     a.comment('Draw Square Testing')
     let rt = {
-        start: {x:0, y:25},
-        outer: {w:50, h:50},
-        inner: {w:15, h:15},
+        start: { x: 0, y: 25 },
+        outer: { w: 50, h: 50 },
+        inner: { w: 15, h: 15 },
         gutter: 10,
         origins: [
             [
@@ -62,7 +71,7 @@ function Init() {
             ]
         ]
     }
-    
+
     rt.origins.forEach(
         (originSet, y) => {
             originSet.forEach(
@@ -83,12 +92,6 @@ function Init() {
             )
         }
     )
-    
-    // ---
-    a.log()
-    
-    // ---
-    a.export()
 }
 
 module.exports = {

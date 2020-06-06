@@ -1,3 +1,4 @@
+const colors = require('colors');
 
 const grblDefault = require("./Config/GrblDefault")
 const settingsDefault = require("./Config/SettingsDefault")
@@ -62,6 +63,11 @@ class Ator {
         let gcode = this.getFormatted()
         let fileId = this.settings.fileName + this.settings.fileExtension
         fs.writeFileSync("public/"+fileId, gcode)
+        console.log(
+            "Sketch".green, 
+            this.settings.fileName.white,
+            `sucessfuly exported \nas gcode at ./public/${fileId}`.green
+        )
     }
 
     // ------------------------------------------------------------------------------------------
