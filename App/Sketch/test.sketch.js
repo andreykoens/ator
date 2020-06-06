@@ -63,8 +63,7 @@ function Init() {
                 rt.outer.h, 
                 {
                     x: rt.start.x + (i * rt.outer.w) + (i * rt.gutter),
-                    // y: rt.start.y + (i * rt.outer.h) + (i * rt.gutter)
-                    y: 0
+                    y: 2.5
                 },
                 "BOTTOM_LEFT"
             )

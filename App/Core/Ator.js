@@ -30,6 +30,10 @@ class Ator {
         this.gcode += command + "; "
     }
 
+    c(val) {
+        return (this.settings.calibration * val).toFixed(2)
+    }
+
     comment(comment, newLine = true) {
         if (newLine) this.issue("")
         if (comment != "") this.issue(`(${comment})`)
@@ -141,11 +145,11 @@ class Ator {
     }
 
     fast(x, y) {
-        this.issue(`G00 X${x} Y${y}`)
+        this.issue(`G00 X${this.c(x)} Y${this.c(y)}`)
     }
 
     linear(x, y) {
-        this.issue(`G01 X${x} Y${y} F${this.settings.f}`)
+        this.issue(`G01 X${this.c(x)} Y${this.c(y)} F${this.settings.f}`)
     }
 
     linearSequence(positions) {
@@ -196,16 +200,90 @@ class Ator {
         this.setRelative()
         let positions = ""
         switch (start) {
-            case "TOP_LEFT": positions = [`X${w}`, `Y${-h}`, `X${-w}`, `Y${h}`]; break;
-            case "TOP_CENTER": positions = [`X${w/2}`, `Y${-h}`, `X${-w}`, `Y${h}`, `X${w/2}`]; break;
-            case "TOP_RIGHT": positions = [`Y${-h}`, `X${-w}`, `Y${h}`, `X${w}`]; break;
-            case "CENTER_LEFT": positions = [`Y${h/2}`, `X${w}`, `Y${-h}`, `X${-w}`, `Y${h/2}`]; break;
-            case "CENTER": positions = [`Y${h}`, `X${w}`, `Y${-h}`, `X${-w}`]; break;
-            case "CENTER_RIGHT": positions = [`Y${-h/2}`, `X${-w}`, `Y${h}`, `X${w}`, `Y${-h/2}`]; break;
-            case "BOTTOM_LEFT": positions = [`X${h}`, `Y${w}`, `X${-h}`, `Y${-w}`]; break;
-            case "BOTTOM_CENTER": positions = [`X${-w/2}`, `Y${h}`, `X${w}`, `Y${-h}`, `X${-w/2}`]; break;
-            case "BOTTOM_RIGHT": positions = [`Y${h}`, `X${-w}`, `Y${-h}`, `X${w}`]; break;
-            default: positions = [`X${h}`, `Y${w}`, `X${-h}`, `Y${-w}`]; break;
+            case "TOP_LEFT": 
+                positions = [
+                    `X${this.c(w)}`, 
+                    `Y${this.c(-h)}`, 
+                    `X${this.c(-w)}`, 
+                    `Y${this.c(h)}`
+                ] 
+            break;
+            case "TOP_CENTER": 
+                positions = [
+                    `X${this.c(w/2)}`,
+                    `Y${this.c(-h)}`,
+                    `X${this.c(-w)}`,
+                    `Y${this.c(h)}`,
+                    `X${this.c(w/2)}`
+                ] 
+            break;
+            case "TOP_RIGHT": 
+                positions = [
+                    `Y${this.c(-h)}`,
+                    `X${this.c(-w)}`,
+                    `Y${this.c(h)}`,
+                    `X${this.c(w)}`
+                ]
+            break;
+            case "CENTER_LEFT": 
+                positions = [
+                    `Y${this.c(h/2)}`,
+                    `X${this.c(w)}`,
+                    `Y${this.c(-h)}`,
+                    `X${this.c(-w)}`,
+                    `Y${this.c(h/2)}`
+                ] 
+            break;
+            case "CENTER": 
+                positions = [
+                    `Y${this.c(h)}`,
+                    `X${this.c(w)}`,
+                    `Y${this.c(-h)}`,
+                    `X${this.c(-w)}`
+                ] 
+            break;
+            case "CENTER_RIGHT": 
+                positions = [
+                    `Y${this.c(-h/2)}`,
+                    `X${this.c(-w)}`,
+                    `Y${this.c(h)}`,
+                    `X${this.c(w)}`,
+                    `Y${this.c(-h/2)}`
+                ] 
+            break;
+            case "BOTTOM_LEFT": 
+                positions = [
+                    `X${this.c(h)}`,
+                    `Y${this.c(w)}`,
+                    `X${this.c(-h)}`,
+                    `Y${this.c(-w)}`
+                ] 
+            break;
+            case "BOTTOM_CENTER": 
+                positions = [
+                    `X${this.c(-w/2)}`,
+                    `Y${this.c(h)}`,
+                    `X${this.c(w)}`,
+                    `Y${this.c(-h)}`,
+                    `X${this.c(-w/2)}`
+                ] 
+            break;
+            case "BOTTOM_RIGHT": 
+                positions = [
+                    `Y${this.c(h)}`,
+                    `X${this.c(-w)}`,
+                    `Y${this.c(-h)}`,
+                    `X${this.c(w)}`
+                ] 
+            break;
+            default: 
+                positions = [
+                    `X${this.c(h)}`,
+                    `Y${this.c(w)}`,
+                    `X${this.c(-h)}`,
+                    `Y${this.c(-w)}`
+                ]
+            break;
         }
         this.linearSequence(positions)
         this.setAbsolute()
