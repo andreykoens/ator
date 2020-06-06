@@ -27,7 +27,7 @@ class Ator {
     // GCODE EDITING
 
     issue(command) {
-        this.gcode += command + ";"
+        this.gcode += command + "; "
     }
 
     comment(comment, newLine = true) {
@@ -39,12 +39,12 @@ class Ator {
     // UTILITY
 
     getFormatted() {
-        return this.gcode.replace(";", "; \n")
+        return this.gcode.replace(/;/gm, ";\n")
     }
 
     log(opt) {
         switch (opt) {
-            case 'full':
+            case 'last':
                 lastLine = this.getFormatted().split("\n")[-2]
                 console.log(lastLine)
             break;
@@ -58,8 +58,8 @@ class Ator {
     // FILE
 
     export() {
-        gcode = this.getFormatted()
-        fileId = this.settings.fileName + this.settings.fileExtension
+        let gcode = this.getFormatted()
+        let fileId = this.settings.fileName + this.settings.fileExtension
         fs.writeFileSync("public/"+fileId, gcode)
     }
 
@@ -72,7 +72,7 @@ class Ator {
 
     setGRBL() {
         this.comment("GRBL Configuration")
-        for (let [k, v] of Object.entries(this.settings)) {
+        for (let [k, v] of Object.entries(this.grbl)) {
             this.issue(`$${k} = ${v}`)
         }
     }
@@ -80,7 +80,7 @@ class Ator {
     // ------------------------------------------------------------------------------------------
     // ATOR CONFIG
 
-    setHome(position) {
+    setHome(position = "") {
         if (position == "") position = `X0 Y0 Z${this.settings.zClear}`
         this.issue(`G92 ${position} (Set Home)`)
     }
@@ -133,11 +133,11 @@ class Ator {
     // PRIMARY OPERATIONS
 
     clear() {
-        this.issue(`G00 Z${s.zClear} F${this.settings.zF}`)
+        this.issue(`G00 Z${this.settings.zClear} F${this.settings.zF}`)
     }
 
     draw() {
-        this.issue(`G00 Z${s.zDraw} F${this.settings.zF}`)
+        this.issue(`G00 Z${this.settings.zDraw} F${this.settings.zF}`)
     }
 
     fast(x, y) {
@@ -151,15 +151,11 @@ class Ator {
     linearSequence(positions) {
         for (let [k, position] of Object.entries(positions)) {
             if (k == 0) {
-                this.issue(`G01 X${position.x} Y${position.y} F${this.settings.f}`)
+                this.issue(`G01 ${position} F${this.settings.f}`)
             } else {
-                this.issue(`X${position.x} Y${position.y}`)
+                this.issue(`${position}`)
             }
         }
-
-         for (let [k, v] of Object.entries(this.settings)) {
-                this.issue(`$${k} = ${v}`)
-            }
     }
 
     // ------------------------------------------------------------------------------------------
@@ -185,32 +181,31 @@ class Ator {
         this.linear(x, y)
     }
 
-    lineFromTo(a, b, comment="") {
+    lineFromTo(ax, ay, bx, by, comment="") {
         if (comment != "") this.comment(comment)
-        this.goTo(a.x, a.y)
+        this.goTo(ax, ay)
         this.draw()
-        this.linear(b.x, b.y)
+        this.linear(bx, by)
     }
 
-    rect(w, h, start="BOTTOM_LEFT", origin={}, comment="") {
+    rect(w, h, origin = {}, start="BOTTOM_LEFT", comment="") {
         if (comment != "") this.comment(comment)
         if (Object.keys(origin).length != 0) this.goTo(origin.x, origin.y)
         if (start == "CENTER") this.goToRel(-w/2, -h/2)
         this.draw()
         this.setRelative()
-        let positions = (start) => {
-            switch (start) {
-                case "TOP_LEFT": return [`X${w}`, `Y${-h}`, `X${-w}`, `Y${h}`]
-                case "TOP_CENTER": return [`X${w/2}`, `Y${-h}`, `X${-w}`, `Y${h}`, `X${w/2}`]
-                case "TOP_RIGHT": return [`Y${-h}`, `X${-w}`, `Y${h}`, `X${w}`]
-                case "CENTER_LEFT": return [`Y${h/2}`, `X${w}`, `Y${-h}`, `X${-w}`, `Y${h/2}`]
-                case "CENTER": return [`Y${h}`, `X${w}`, `Y${-h}`, `X${-w}`]
-                case "CENTER_RIGHT": return [`Y${-h/2}`, `X${-w}`, `Y${h}`, `X${w}`, `Y${-h/2}`]
-                case "BOTTOM_LEFT": return [`X${h}`, `Y${w}`, `X${-h}`, `Y${-w}`]
-                case "BOTTOM_CENTER": return [`X${-w/2}`, `Y${h}`, `X${w}`, `Y${-h}`, `X${-w/2}`]
-                case "BOTTOM_RIGHT": return [`Y${h}`, `X${-w}`, `Y${-h}`, `X${w}`]
-                default: return [`X${h}`, `Y${w}`, `X${-h}`, `Y${-w}`]
-            }
+        let positions = ""
+        switch (start) {
+            case "TOP_LEFT": positions = [`X${w}`, `Y${-h}`, `X${-w}`, `Y${h}`]; break;
+            case "TOP_CENTER": positions = [`X${w/2}`, `Y${-h}`, `X${-w}`, `Y${h}`, `X${w/2}`]; break;
+            case "TOP_RIGHT": positions = [`Y${-h}`, `X${-w}`, `Y${h}`, `X${w}`]; break;
+            case "CENTER_LEFT": positions = [`Y${h/2}`, `X${w}`, `Y${-h}`, `X${-w}`, `Y${h/2}`]; break;
+            case "CENTER": positions = [`Y${h}`, `X${w}`, `Y${-h}`, `X${-w}`]; break;
+            case "CENTER_RIGHT": positions = [`Y${-h/2}`, `X${-w}`, `Y${h}`, `X${w}`, `Y${-h/2}`]; break;
+            case "BOTTOM_LEFT": positions = [`X${h}`, `Y${w}`, `X${-h}`, `Y${-w}`]; break;
+            case "BOTTOM_CENTER": positions = [`X${-w/2}`, `Y${h}`, `X${w}`, `Y${-h}`, `X${-w/2}`]; break;
+            case "BOTTOM_RIGHT": positions = [`Y${h}`, `X${-w}`, `Y${-h}`, `X${w}`]; break;
+            default: positions = [`X${h}`, `Y${w}`, `X${-h}`, `Y${-w}`]; break;
         }
         this.linearSequence(positions)
         this.setAbsolute()
