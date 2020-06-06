@@ -1,5 +1,7 @@
-const core = require('../Core/Ator')
-const Ator = core.Ator
+const Ator = require('../Core/Ator').Ator
+const go = require('../Core/Methods/Go')
+const line = require('../Core/Methods/Line')
+const poly = require('../Core/Methods/Polygon')
 
 function Init() {
     console.log("Sketch init".magenta)
@@ -33,8 +35,8 @@ function Init() {
 
     // ---
     a.comment('Draw Register')
-    a.lineFromTo(-1.25, 1.25, 1.25, -1.25)
-    a.lineFromTo(-1.25, -1.25, 1.25, 1.25)
+    line.fromTo(a, -1.25, 1.25, 1.25, -1.25)
+    line.fromTo(a, -1.25, -1.25, 1.25, 1.25)
     
     // ---
     a.comment('Draw Square Testing')
@@ -58,7 +60,8 @@ function Init() {
     
     rt.origins.forEach(
         (origin, i) => {
-            a.rect(
+            poly.rect(
+                a,
                 rt.outer.w, 
                 rt.outer.h, 
                 {
@@ -67,8 +70,8 @@ function Init() {
                 },
                 "BOTTOM_LEFT"
             )
-            a.goToRel(rt.outer.w/2, rt.outer.h/2)
-            a.rect(rt.inner.w, rt.inner.h, {}, origin)
+            go.toRel(a, rt.outer.w/2, rt.outer.h/2)
+            poly.rect(a, rt.inner.w, rt.inner.h, {}, origin)
         }
     )
     

@@ -3,6 +3,7 @@ const grblDefault = require("./Config/GrblDefault")
 const settingsDefault = require("./Config/SettingsDefault")
 const toolsDefault = require("./Config/ToolsDefault")
 
+const c = require('./Methods/Utils').calibrate
 const fs = require('fs');
 
 class Ator {
@@ -28,10 +29,6 @@ class Ator {
 
     issue(command) {
         this.gcode += command + "; "
-    }
-
-    c(val) {
-        return (this.settings.calibration * val).toFixed(2)
     }
 
     comment(comment, newLine = true) {
@@ -145,11 +142,11 @@ class Ator {
     }
 
     fast(x, y) {
-        this.issue(`G00 X${this.c(x)} Y${this.c(y)}`)
+        this.issue(`G00 X${c(this, x)} Y${c(this, y)}`)
     }
 
     linear(x, y) {
-        this.issue(`G01 X${this.c(x)} Y${this.c(y)} F${this.settings.f}`)
+        this.issue(`G01 X${c(this, x)} Y${c(this, y)} F${this.settings.f}`)
     }
 
     linearSequence(positions) {
@@ -160,134 +157,6 @@ class Ator {
                 this.issue(`${position}`)
             }
         }
-    }
-
-    // ------------------------------------------------------------------------------------------
-    // SECONDARY OPERATIONS
-
-    goTo(x, y, comment="") {
-        if (comment != "") this.comment(comment)
-        this.clear()
-        this.fast(x, y)
-    }
-
-    goToRel(x, y, comment="") {
-        if (comment != "") this.comment(comment)
-        this.clear()
-        this.setRelative()
-        this.fast(x, y)
-        this.setAbsolute()
-    }
-
-    lineTo(x, y, comment="") {
-        if (comment != "") this.comment(comment)
-        this.draw()
-        this.linear(x, y)
-    }
-
-    lineFromTo(ax, ay, bx, by, comment="") {
-        if (comment != "") this.comment(comment)
-        this.goTo(ax, ay)
-        this.draw()
-        this.linear(bx, by)
-    }
-
-    rect(w, h, origin = {}, start="BOTTOM_LEFT", comment="") {
-        if (comment != "") this.comment(comment)
-        if (Object.keys(origin).length != 0) this.goTo(origin.x, origin.y)
-        if (start == "CENTER") this.goToRel(-w/2, -h/2)
-        this.draw()
-        this.setRelative()
-        let positions = ""
-        switch (start) {
-            case "TOP_LEFT": 
-                positions = [
-                    `X${this.c(w)}`, 
-                    `Y${this.c(-h)}`, 
-                    `X${this.c(-w)}`, 
-                    `Y${this.c(h)}`
-                ] 
-            break;
-            case "TOP_CENTER": 
-                positions = [
-                    `X${this.c(w/2)}`,
-                    `Y${this.c(-h)}`,
-                    `X${this.c(-w)}`,
-                    `Y${this.c(h)}`,
-                    `X${this.c(w/2)}`
-                ] 
-            break;
-            case "TOP_RIGHT": 
-                positions = [
-                    `Y${this.c(-h)}`,
-                    `X${this.c(-w)}`,
-                    `Y${this.c(h)}`,
-                    `X${this.c(w)}`
-                ]
-            break;
-            case "CENTER_LEFT": 
-                positions = [
-                    `Y${this.c(h/2)}`,
-                    `X${this.c(w)}`,
-                    `Y${this.c(-h)}`,
-                    `X${this.c(-w)}`,
-                    `Y${this.c(h/2)}`
-                ] 
-            break;
-            case "CENTER": 
-                positions = [
-                    `Y${this.c(h)}`,
-                    `X${this.c(w)}`,
-                    `Y${this.c(-h)}`,
-                    `X${this.c(-w)}`
-                ] 
-            break;
-            case "CENTER_RIGHT": 
-                positions = [
-                    `Y${this.c(-h/2)}`,
-                    `X${this.c(-w)}`,
-                    `Y${this.c(h)}`,
-                    `X${this.c(w)}`,
-                    `Y${this.c(-h/2)}`
-                ] 
-            break;
-            case "BOTTOM_LEFT": 
-                positions = [
-                    `X${this.c(h)}`,
-                    `Y${this.c(w)}`,
-                    `X${this.c(-h)}`,
-                    `Y${this.c(-w)}`
-                ] 
-            break;
-            case "BOTTOM_CENTER": 
-                positions = [
-                    `X${this.c(-w/2)}`,
-                    `Y${this.c(h)}`,
-                    `X${this.c(w)}`,
-                    `Y${this.c(-h)}`,
-                    `X${this.c(-w/2)}`
-                ] 
-            break;
-            case "BOTTOM_RIGHT": 
-                positions = [
-                    `Y${this.c(h)}`,
-                    `X${this.c(-w)}`,
-                    `Y${this.c(-h)}`,
-                    `X${this.c(w)}`
-                ] 
-            break;
-            default: 
-                positions = [
-                    `X${this.c(h)}`,
-                    `Y${this.c(w)}`,
-                    `X${this.c(-h)}`,
-                    `Y${this.c(-w)}`
-                ]
-            break;
-        }
-        this.linearSequence(positions)
-        this.setAbsolute()
-        if (start == "CENTER") this.goToRel(w/2, h/2)
     }
 
 }
