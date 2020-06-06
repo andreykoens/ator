@@ -1,12 +1,13 @@
 const colors = require('colors');
 const path = require('path');
 
-const sketch = require('./Sketch/test.sketch')
-const Sketch = sketch.Init
+const Sketch = require('./Sketch/test.sketch').Init
 
-init = () => {
+Build = () => {
     console.log('App init'.magenta)
     Sketch()
 }
 
-init()
+module.exports = {
+    Build: Build
+}

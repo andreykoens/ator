@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "onchange 'App/**/*.js' -- npm run build",
-    "build": "node App/App.js"
+    "build": "node -e 'require(\"./App/App.js\").Build()'"
   },
   "repository": {
     "type": "git",
