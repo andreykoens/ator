@@ -13,8 +13,13 @@ function toRel(ator, x, y, comment = "") {
     ator.setAbsolute()
 }
 
-function toPlace() {
-
+function toPlace(ator, place) {
+    switch (place) {
+        case "home":
+            ator.clear()
+            ator.fast(0, 0)
+        break;
+    }
 }
 
 module.exports = {

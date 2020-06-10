@@ -88,7 +88,7 @@ class Ator {
     // ATOR CONFIG
 
     setHome(position = "") {
-        if (position == "") position = `X0 Y0 Z${this.settings.zClear}`
+        if (position == "") position = `X0 Y0 Z5`
         this.issue(`G92 ${position} (Set Home)`)
     }
 

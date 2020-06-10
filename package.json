@@ -20,6 +20,8 @@
   "homepage": "https://github.com/andreykoens/ator#readme",
   "dependencies": {
     "colors": "^1.4.0",
-    "onchange": "^7.0.2"
+    "onchange": "^7.0.2",
+    "opn": "^6.0.0",
+    "serialport": "^9.0.0"
   }
 }
