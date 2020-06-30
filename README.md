@@ -3,11 +3,13 @@ Assistente de pintura computadorizado
 ---
 
 Ator é uma camada de abstração para aplicações criativas com CNCs.
+
 Seu intuito é mediar a criação de código GCode para uso manual (criação de desenhos com código) e automatização via inteligência artificial.
 
 ---
 
 npm i
+
 npm run watch
 
 ---
